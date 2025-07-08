@@ -1,0 +1,1 @@
+Moses = require 'libraries/moses/moses'
