@@ -33,7 +33,9 @@ function love.load(args)
 	loadFonts('resources/fonts')
 
 	gunslingerSpriteMap = love.graphics.newImage("resources/tiny_gunslinger48x32.png") 
-
+	tileset = love.graphics.newImage("resources/tileset.png")
+	wall = love.graphics.newImage("resources/wall.png")
+	floor = love.graphics.newImage("resources/floor.png")
 
 	camera = Camera()
 	input = Input()

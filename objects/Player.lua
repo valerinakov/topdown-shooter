@@ -5,7 +5,6 @@ function Player:new(area,x,y,opts)
     self.name = 'Player'
     self.x,self.y = x, y
     self.w,self.h = 12,12
-
     self.animationState = 'Idle'
 
     self.gunslingerIdleFrames = {}
@@ -32,7 +31,7 @@ function Player:update(dt)
     Player.super.update(self,dt)
 
     if input:down('left') then
-        self.animationState = 'MovingLeft'
+        self.animationState = 'MovingLeft' 
         self.x = self.x - 1    
     end
 
@@ -42,20 +41,16 @@ function Player:update(dt)
     end
 
     if input:down('up') then
-        self.animationState = 'MovingUp'
         self.y = self.y - 1
     end
 
     if input:down('down') then
-        self.animationState = 'MovingDown'
         self.y = self.y + 1    
     end
 
     if  not input:down('left') and not input:down('right') and not input:down('up') and not input:down('down') then
         self.animationState = 'Idle'
     end
-
-    print('idle length ' .. #self.gunslingerIdleFrames)
 
     self.currentFrame = self.currentFrame + (10 * dt)
     if self.currentFrame >= 7 then
@@ -70,21 +65,23 @@ function Player:update(dt)
         -- print('angle ', angle)
         -- print('mx', mx)
         -- print('my', my)
-        -- print('x', self.player.x)
-        -- print('y', self.player.y)
+        print('x', self.x)
+        print('y', self.y)
     end
 end
 
 function Player:draw()
     if self.animationState == 'Idle' then
-        love.graphics.draw(gunslingerSpriteMap, self.gunslingerIdleFrames[math.floor(self.currentFrame)], self.x, self.y)
+        love.graphics.draw(gunslingerSpriteMap, self.gunslingerIdleFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20)
     end
 
     if self.animationState == 'MovingRight' then
-        love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x, self.y)
+        love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20)
     end
 
     if self.animationState == 'MovingLeft' then
-        love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x, self.y, 0, -1, 1, 53)
+        love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x -18, self.y - 20, 0, -1, 1, 48)
     end
+
+    -- love.graphics.rectangle("fill", self.x + 18, self.y + 20 ,self.w, self.h)
 end

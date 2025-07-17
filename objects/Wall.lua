@@ -5,7 +5,7 @@ function Wall:new(area,x,y,opts)
     self.name = 'Wall'
 
     self.x,self.y = x, y
-    self.w,self.h = 50,150
+    self.w,self.h = 16,16
 end
 
 function Wall:update(dt)
@@ -14,6 +14,5 @@ function Wall:update(dt)
 end
 
 function Wall:draw()
-    love.graphics.setColor(love.math.colorFromBytes(50, 2, 255))
-    love.graphics.rectangle("fill", self.x,self.y, self.w,self.h)
+    love.graphics.draw(wall, self.x, self.y)
 end

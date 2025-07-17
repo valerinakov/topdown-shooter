@@ -6,8 +6,8 @@ function Area:new(room)
 end
 
 function Area:update(dt)
-    -- local count = self.world:countItems()
-    -- print('amount ' .. count)
+    local count = self.world:countItems()
+    print('amount ' .. count)
     -- print('test ' .. #self.game_objects)
     for i = #self.game_objects, 1, -1 do
         local game_object = self.game_objects[i]
