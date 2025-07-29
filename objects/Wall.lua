@@ -15,4 +15,6 @@ end
 
 function Wall:draw()
     love.graphics.draw(wall, self.x, self.y)
+    -- love.graphics.setColor(love.math.colorFromBytes(255, 0, 0))
+    -- love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 end

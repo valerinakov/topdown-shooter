@@ -7,8 +7,9 @@ end
 
 function Area:update(dt)
     local count = self.world:countItems()
-    print('amount ' .. count)
-    -- print('test ' .. #self.game_objects)
+    -- print('amount ' .. count)
+
+    -- print('game object' .. #self.game_objects)
     for i = #self.game_objects, 1, -1 do
         local game_object = self.game_objects[i]
         game_object:update(dt)
@@ -29,7 +30,7 @@ function Area:draw()
 end
 
 function Area:addPhysicsWorld()
-    self.world = Bump.newWorld(50)
+    self.world = Bump.newWorld(64)
 end
 
 function Area:addCollision(object)
@@ -40,10 +41,15 @@ function Area:move(object,filter)
     
     local actualX, actualY, cols, len = self.world:move(object, object.x,object.y, filter) 
 
-    for i=1,len do -- If more than one simultaneous collision, they are sorted out by proximity
-  local col = cols[i]
-  print(("Collision with %s."):format(col.other.name))
-end
+    -- for i=1,len do -- If more than one simultaneous collision, they are sorted out by proximity
+    --     local col = cols[i]
+    --     print(("Collision with %s."):format(col.other.name))
+
+    --     if object.name == 'Projectile' and col.other.name == "Wall" then
+    --         object:die()
+    --     end
+
+    -- end
 
     if actualX ~= object.x then
         object.x = actualX
@@ -52,7 +58,8 @@ end
     if actualY ~= object.y then
         object.y = actualY
     end
-    -- print(len)
+
+    return actualX, actualY, cols, len
 end
 
 function Area:destroy()
@@ -73,7 +80,7 @@ function Area:addGameObject(game_object_type, x, y, opts)
     local opts = opts or {}
     local game_object = _G[game_object_type](self, x or 0, y or 0, opts)
     game_object.class = game_object_type
-    print(game_object.class)
+    -- print(game_object.class)
     table.insert(self.game_objects, game_object)
     return game_object
 end

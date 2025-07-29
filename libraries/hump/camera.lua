@@ -68,19 +68,26 @@ local function new(x,y, zoom, rot, smoother)
 	return setmetatable({x = x, y = y, scale = zoom, rot = rot, smoother = smoother, x_shakes = {}, y_shakes = {}}, camera)
 end
 
+function camera:new()
+	self.x_shakes = {}
+	self.y_shakes = {}
+	self.x_shake_offset = 0
+	self.y_shake_offset = 0
+end
+
 function camera:update(dt)
-    local x_shake_amount, y_shake_amount = 0, 0
+    self.x_shake_offset, self.y_shake_offset = 0, 0
     for i = #self.x_shakes, 1, -1 do
         self.x_shakes[i]:update(dt)
-        x_shake_amount = x_shake_amount + self.x_shakes[i]:getAmplitude()
+        self.x_shake_offset = self.x_shake_offset + self.x_shakes[i]:getAmplitude()
         if not self.x_shakes[i].shaking then table.remove(self.x_shakes, i) end
     end
     for i = #self.y_shakes, 1, -1 do
         self.y_shakes[i]:update(dt)
-        y_shake_amount = y_shake_amount + self.y_shakes[i]:getAmplitude()
+        self.y_shake_offset = self.y_shake_offset + self.y_shakes[i]:getAmplitude()
         if not self.y_shakes[i].shaking then table.remove(self.y_shakes, i) end
     end
-    self:move(x_shake_amount, y_shake_amount)
+    -- self:move(self.x_shake_offset, self.y_shake_offset)
 end
 
 -- camera shake

@@ -9,6 +9,13 @@ function Projectile:new(area,x,y,opts)
     self.s = opts.s or 2.5
     self.v = opts.v or 200
     self.r = opts.r
+    self.depth = 5100
+
+    self.w = opts.s or 2.5
+    self.h = opts.s or 2.5
+    -- self.timer:after(2, function() 
+    --     self:die()
+    -- end)
 end
 
 function Projectile:update(dt)
@@ -16,6 +23,9 @@ function Projectile:update(dt)
 
     self.x = self.x + (math.cos(self.r)*dt*self.v)
     self.y = self.y + (math.sin(self.r)*dt*self.v)
+
+    -- print('x' .. self.x)
+    -- print('y' .. self.y)
 
     if self.x < 0 then self:die() end
     if self.y < 0 then self:die() end
@@ -26,6 +36,8 @@ end
 function Projectile:draw()
     love.graphics.setColor(love.math.colorFromBytes(0, 234, 255))
     love.graphics.circle('fill', self.x, self.y, self.s)
+    love.graphics.setColor(love.math.colorFromBytes(255, 0, 0))
+    love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 end
 
 function Projectile:die()

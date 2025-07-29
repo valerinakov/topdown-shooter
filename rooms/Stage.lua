@@ -2,14 +2,12 @@ Stage = Object:extend()
 
 function Stage:new()
     self.area = Area(self)
+    self.timer = Timer()
     self.area:addPhysicsWorld()
     self.main_canvas = love.graphics.newCanvas(gw,gh)
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
-
-    self.wall = self.area:addGameObject('Wall', 500,250)
-
-    self.area:addCollision(self.wall)
+    self.gun = self.area:addGameObject('Gun', self.player.x, self.player.y, {h = self.player.h, w = self.player.w})
 
     self.area:addCollision(self.player)
 
@@ -77,7 +75,7 @@ function Stage:new()
                         self.area:addCollision(self.walls)
                     end
                     if tile == 2 then
-                        love.graphics.draw(floor, (j-1) * self.width, (i-1) * self.height)
+                        -- love.graphics.draw(floor, (j-1) * self.width, (i-1) * self.height)
                     end
                     -- love.graphics.draw(tileset, self.quads[tile], (j-1) * self.width, (i-1) * self.height)
                 end 
@@ -86,26 +84,57 @@ function Stage:new()
 
 end
 
-local projectileFilter = function(item, other)
-  if     other.name == 'Wall'   then return 'touch'
+local playerFilter = function(item, other)
+  if other.name == 'Projectile' then 
+    return 'cross'
+      elseif other.name == 'Wall' then
+    print('here')
+    return 'slide'
+end
+  -- else return nil
+end
 
-  end
+local projectileFilter = function(item, other)
+  if other.name == 'Wall' then 
+    return 'touch'
+  elseif other.name == 'Player' then
+    return 'cross'
+end
   -- else return nil
 end
 
 function Stage:update(dt)
     self.area:update(dt)
-    self.area:move(self.player)
-    -- camera.smoother = Camera.smooth.damped(5)
-    -- camera:lockPosition(dt, (gw/2), gh/2)
-    camera:lookAt(self.player.x,self.player.y)
+    self.timer:update(dt)
+
+    print('player x' .. self.player.x)
+
+    if cameraProjectileOffset.x ~= 0 or cameraProjectileOffset.y ~= 0 then
+        self.timer:tween('projoffet', 0.05, cameraProjectileOffset, {x = 0, y = 0}, 'in-out-linear')
+    end
+
+    self.area:move(self.player, playerFilter)
+    camera.smoother = Camera.smooth.damped(5)
+    camera:lockPosition(dt, (gw/2), gh/2)
+    -- camera:lookAt(self.player.x,self.player.y)
+    camera:lookAt(self.player.x + camera.x_shake_offset + cameraProjectileOffset.x, self.player.y + camera.y_shake_offset + cameraProjectileOffset.y)
+
+
     local items, len = self.area.world:getItems()
 
     for i, item in ipairs(items) do
         if item.name == 'Projectile' then
-            self.area:move(item,projectileFilter)
-            print('x' .. item.x)
-            print('y' .. item.y)
+            local actualX, actualY, cols, len = self.area:move(item,projectileFilter)
+
+            for i=1,len do -- If more than one simultaneous collision, they are sorted out by proximity
+                local col = cols[i]
+                print(("Collision with %s."):format(col.other.name))
+
+                if col.other.name == "Wall" then
+                    item:die()
+                end
+
+            end
         end
     end
 end
@@ -116,7 +145,7 @@ function Stage:draw()
     love.graphics.setCanvas(self.main_canvas)
     love.graphics.clear()
     camera:attach(0,0,gw,gh)
-
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255, 255))
         for i,row in ipairs(self.tilemap) do
             for j,tile in ipairs(row) do
                 if tile ~= 0 then
@@ -131,12 +160,12 @@ function Stage:draw()
                 end 
             end
         end
-                if self.area then self.area:draw() end
+        if self.area then self.area:draw() end
     camera:detach()
     love.graphics.setCanvas()
 
-        love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.setBlendMode('alpha', 'premultiplied')
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255, 255))
+    love.graphics.setBlendMode('alpha')
     love.graphics.draw(self.main_canvas, 0, 0, 0, sx, sy)
     love.graphics.setBlendMode('alpha')
 end

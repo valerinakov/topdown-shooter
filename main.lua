@@ -36,6 +36,7 @@ function love.load(args)
 	tileset = love.graphics.newImage("resources/tileset.png")
 	wall = love.graphics.newImage("resources/wall.png")
 	floor = love.graphics.newImage("resources/floor.png")
+	gun = love.graphics.newImage("resources/gun.png")
 
 	camera = Camera()
 	input = Input()
