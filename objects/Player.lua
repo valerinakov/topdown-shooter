@@ -62,10 +62,10 @@ function Player:update(dt)
     if input:pressed('mouse1', dt) then
         local mx,my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
         local angle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
-        self.projectile = self.area:addGameObject('Projectile', (self.x + (self.w/2)) , (self.y + (self.h/2)), {r = angle})
+        self.area:addGameObject('ShootEffect', (self.x + (self.w/2)) + (14*math.cos(angle)) , (self.y + (self.h/2)) + (14*math.sin(angle)))
+        self.projectile = self.area:addGameObject('Projectile', (self.x + (self.w/2)) + (14*math.cos(angle)) , (self.y + (self.h/2)) + (14*math.sin(angle)), {r = angle})
         cameraProjectileOffset.x = cameraProjectileOffset.x + (3* math.cos(angle))
         cameraProjectileOffset.y = cameraProjectileOffset.y + (3*math.sin(angle))
-        print('y offset' , cameraProjectileOffset.y)
         self.area:addCollision(self.projectile)
         camera:shake(1,60,0.2)
     end

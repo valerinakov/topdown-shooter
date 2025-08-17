@@ -16,6 +16,9 @@ function Projectile:new(area,x,y,opts)
     -- self.timer:after(2, function() 
     --     self:die()
     -- end)
+
+        love.graphics.setColor(love.math.colorFromBytes(255, 234, 255))
+    love.graphics.circle('fill', self.x, self.y, self.s*2)
 end
 
 function Projectile:update(dt)
@@ -35,9 +38,9 @@ end
 
 function Projectile:draw()
     love.graphics.setColor(love.math.colorFromBytes(0, 234, 255))
-    love.graphics.circle('fill', self.x, self.y, self.s)
-    love.graphics.setColor(love.math.colorFromBytes(255, 0, 0))
-    love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+    love.graphics.circle('fill', self.x, self.y, self.s*2)
+    -- love.graphics.setColor(love.math.colorFromBytes(255, 0, 0))
+    -- love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
 end
 
 function Projectile:die()

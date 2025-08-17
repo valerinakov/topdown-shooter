@@ -3,7 +3,7 @@ Wall = GameObject:extend()
 function Wall:new(area,x,y,opts)
     Wall.super.new(self,area,x,y,opts)
     self.name = 'Wall'
-
+    self.depth = 1
     self.x,self.y = x, y
     self.w,self.h = 16,16
 end
