@@ -7,7 +7,7 @@ function Projectile:new(area,x,y,opts)
     self.x = x
     self.y = y
     self.s = opts.s or 2.5
-    self.v = opts.v or 200
+    self.v = opts.v or 300
     self.r = opts.r
     self.depth = 5100
 
@@ -37,7 +37,7 @@ function Projectile:update(dt)
 end
 
 function Projectile:draw()
-    love.graphics.setColor(love.math.colorFromBytes(0, 234, 255))
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 0))
     love.graphics.circle('fill', self.x, self.y, self.s*2)
     -- love.graphics.setColor(love.math.colorFromBytes(255, 0, 0))
     -- love.graphics.rectangle("line", self.x, self.y, self.w, self.h)

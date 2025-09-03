@@ -23,12 +23,30 @@ function Player:new(area,x,y,opts)
         table.insert(self.gunslingerMovingFrames, love.graphics.newQuad(i * self.frame_width, 32, self.frame_width, self.frame_height,gunslingerSpriteMap:getWidth(), gunslingerSpriteMap:getHeight()))
     end
 
+    self.shootSource = love.audio.newSource('/resources/audio/pistol-shoot.wav', 'static')
+    self.shootSound = Ripple.newSound(self.shootSource)
+
+    self.moveSource = love.audio.newSource('/resources/audio/moving.wav', 'static')
+    self.moveSound = Ripple.newSound(self.moveSource)
+    self.movingStopped = true
+
+    local angle = 0
 
     self.currentFrame = 1
+    
 end
 
 function Player:update(dt)
     Player.super.update(self,dt)
+
+    if self.animationState == 'Moving' and self.movingStopped then
+        self.movingStopped = false
+        local moveSound = self.moveSound:play()
+        self.timer:after(0.4, function() 
+            self.movingStopped = true
+        end)
+    
+    end
 
     if input:down('left') then
         self.animationState = 'Moving' 
@@ -61,19 +79,21 @@ function Player:update(dt)
 
     if input:pressed('mouse1', dt) then
         local mx,my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
-        local angle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
+        local standardAngle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
+        angle = standardAngle + random(-math.pi/24,math.pi/24)
         self.area:addGameObject('ShootEffect', (self.x + (self.w/2)) + (14*math.cos(angle)) , (self.y + (self.h/2)) + (14*math.sin(angle)))
         self.projectile = self.area:addGameObject('Projectile', (self.x + (self.w/2)) + (14*math.cos(angle)) , (self.y + (self.h/2)) + (14*math.sin(angle)), {r = angle})
         cameraProjectileOffset.x = cameraProjectileOffset.x + (3* math.cos(angle))
         cameraProjectileOffset.y = cameraProjectileOffset.y + (3*math.sin(angle))
         self.area:addCollision(self.projectile)
         camera:shake(1,60,0.2)
+        self.shootSound:play()
     end
 end
 
 function Player:draw()
     local mx,my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
-    local angle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
+    -- local angle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
     
     if mx < self.x then
         if self.animationState == 'Idle' then

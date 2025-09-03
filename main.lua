@@ -6,6 +6,7 @@ Camera = require 'libraries/hump/camera'
 DraftLib = require 'libraries/draft/draft'
 Vector = require 'libraries/hump/vector'
 Bump = require 'libraries/bump/bump'
+Ripple = require 'libraries/ripple/ripple'
 
 require 'libraries/utf8/utf8'
 
