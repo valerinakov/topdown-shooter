@@ -8,6 +8,7 @@ function Stage:new()
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
     self.gun = self.area:addGameObject('Gun', self.player.x, self.player.y, {h = self.player.h, w = self.player.w})
+    self.blob = self.area:addGameObject('EnemyBlob', gw/2, gh/2)
 
     self.area:addCollision(self.player)
 
@@ -151,7 +152,7 @@ function Stage:draw()
                 if tile ~= 0 then
                     -- if tile == 1 then
                     --     self.walls = self.area:addGameObject('Wall', (j-1) * self.width, (i-1) * self.height)
-                    --     self.area:addCollision(self.walls)
+                    --     self.area:addxCollision(self.walls)
                     -- end
                     if tile == 2 then
                         love.graphics.draw(floor,(j-1) * self.width, (i-1) * self.height)

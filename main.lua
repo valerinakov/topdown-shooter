@@ -33,6 +33,7 @@ function love.load(args)
 
 	loadFonts('resources/fonts')
 
+	blobSpriteMap = love.graphics.newImage("resources/blob34x15.png")
 	gunslingerSpriteMap = love.graphics.newImage("resources/tiny_gunslinger48x32.png") 
 	tileset = love.graphics.newImage("resources/tileset.png")
 	wall = love.graphics.newImage("resources/wall.png")
