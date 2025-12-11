@@ -14,7 +14,7 @@ function Area:update(dt)
         local game_object = self.game_objects[i]
         game_object:update(dt)
         if game_object.dead then 
-            if self.world:hasItem(item) then
+            if self.world:hasItem(game_object) then
                 self.world:remove(game_object)
             end
             game_object:destroy()

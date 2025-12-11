@@ -8,9 +8,10 @@ function Stage:new()
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
     self.gun = self.area:addGameObject('Gun', self.player.x, self.player.y, {h = self.player.h, w = self.player.w})
-    self.blob = self.area:addGameObject('EnemyBlob', gw/2, gh/2)
+    -- self.blob = self.area:addGameObject('EnemyBlob', gw/2, 50)
 
     self.area:addCollision(self.player)
+    -- self.area:addCollision(self.blob)
 
     self.image_width = tileset:getWidth()
     self.image_height = tileset:getHeight()
@@ -19,6 +20,11 @@ function Stage:new()
     self.height = 16
 
     self.quads = {}
+
+    self.timer:every(1, function() 
+       self.test = self.area:addGameObject('EnemyBlob', random(0,(gw/2) - 25), 25)
+       self.area:addCollision(self.test)
+    end)
 
     for i = 0,6 do
         for j = 0,10 do
@@ -88,8 +94,9 @@ end
 local playerFilter = function(item, other)
   if other.name == 'Projectile' then 
     return 'cross'
-      elseif other.name == 'Wall' then
-    print('here')
+  elseif other.name == 'Wall' then
+    return 'slide'
+elseif other.name == 'EnemyBlob' then
     return 'slide'
 end
   -- else return nil
@@ -100,6 +107,20 @@ local projectileFilter = function(item, other)
     return 'touch'
   elseif other.name == 'Player' then
     return 'cross'
+  elseif other.name == 'EnemyBlob' then
+    return 'touch'
+  end
+  -- else return nil
+end
+
+local blobFilter = function(item, other)
+  if other.name == 'Player' then 
+    return 'slide'
+  elseif other.name == 'Wall' then
+    return 'slide'
+  elseif other.name == "EnemyBlob" then
+    return 'slide'
+  
 end
   -- else return nil
 end
@@ -108,13 +129,12 @@ function Stage:update(dt)
     self.area:update(dt)
     self.timer:update(dt)
 
-    print('player x' .. self.player.x)
-
     if cameraProjectileOffset.x ~= 0 or cameraProjectileOffset.y ~= 0 then
         self.timer:tween('projoffet', 0.05, cameraProjectileOffset, {x = 0, y = 0}, 'in-out-linear')
     end
 
     self.area:move(self.player, playerFilter)
+    -- self.area:move(self.blob, blobFilter)
     camera.smoother = Camera.smooth.damped(5)
     camera:lockPosition(dt, (gw/2), gh/2)
     -- camera:lookAt(self.player.x,self.player.y)
@@ -123,7 +143,12 @@ function Stage:update(dt)
 
     local items, len = self.area.world:getItems()
 
+    -- for k,v in pairs(items) do
+    --     print(v.name)
+    -- end
+
     for i, item in ipairs(items) do
+        -- print(item.name)
         if item.name == 'Projectile' then
             local actualX, actualY, cols, len = self.area:move(item,projectileFilter)
 
@@ -131,11 +156,20 @@ function Stage:update(dt)
                 local col = cols[i]
                 print(("Collision with %s."):format(col.other.name))
 
+                if col.other.name == "EnemyBlob" then
+                    print("helllo?")
+                    col.other:damage(item.damage)
+                    item:die()
+                end
+
                 if col.other.name == "Wall" then
                     item:die()
                 end
 
             end
+        elseif item.name == "EnemyBlob" then
+            -- print("here??")
+            local actualX, actualY, cols, len = self.area:move(item,blobFilter)
         end
     end
 end

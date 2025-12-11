@@ -11,13 +11,15 @@ function Projectile:new(area,x,y,opts)
     self.r = opts.r
     self.depth = 5100
 
+    self.damage = 10
+
     self.w = opts.s or 2.5
     self.h = opts.s or 2.5
     -- self.timer:after(2, function() 
     --     self:die()
     -- end)
 
-        love.graphics.setColor(love.math.colorFromBytes(255, 234, 255))
+    love.graphics.setColor(love.math.colorFromBytes(255, 234, 255))
     love.graphics.circle('fill', self.x, self.y, self.s*2)
 end
 
