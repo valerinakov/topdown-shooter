@@ -7,7 +7,7 @@ function EnemyBlob:new(area,x,y,opts)
     self.x,self.y = x,y
     self.w,self.h = 10,10
 
-    self.hp = 20
+    self.hp = 50
 
     self.animationState = "Moving"
 
@@ -28,6 +28,7 @@ function EnemyBlob:new(area,x,y,opts)
     self.currentFrame = 1
     self.maxFrames = 7
     self.angle = 0
+    self.r = 0
 end
 
 function EnemyBlob:update(dt)
@@ -38,6 +39,8 @@ function EnemyBlob:update(dt)
     elseif(self.animationState == "Hurt") then
         self.maxFrames = 3
     end
+
+    print("r ", self.r)
 
     self.y = self.y + (math.sin(self.angle)/2)
     self.x = self.x + (math.cos(self.angle)/2)
@@ -74,12 +77,16 @@ function EnemyBlob:damage(damage)
     self.currentFrame = 2
     self.hp = self.hp - damage
 
+    self.x = self.x - (math.cos(self.angle)*3)
+    self.y = self.y - (math.sin(self.angle)*3)
+
     if(self.hp <= 0) then
-        self.dead = true
+        self:die()
     end
 end
 
 function EnemyBlob:die()
     self.animationState = "Dead"
+    self.area:addGameObject('BlobDeathAnimation', self.x,self.y)
     self.dead = true
 end
