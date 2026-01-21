@@ -15,7 +15,7 @@ require 'utils'
 require 'globals'
 
 function love.load(args)
-	-- love.graphics.setBackgroundColor(love.math.colorFromBytes(background_color))
+	love.graphics.setBackgroundColor(love.math.colorFromBytes(108,113,130))
 	
 	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
@@ -39,6 +39,8 @@ function love.load(args)
 	wall = love.graphics.newImage("resources/wall.png")
 	floor = love.graphics.newImage("resources/floor.png")
 	gun = love.graphics.newImage("resources/gun.png")
+	walls = love.graphics.newImage("resources/walls_dungeon.png")
+	scifiTileset = love.graphics.newImage("resources/scifi.png")
 
 	camera = Camera()
 	input = Input()
@@ -96,7 +98,7 @@ function love.draw()
 		if flash_frames == -1 then flash_frames = nil end
 	end
 	if flash_frames then
-		love.graphics.setColor(love.math.colorFromBytes(background_color))
+		love.graphics.setColor(love.math.colorFromBytes(0,0,0))
 		love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
 		love.graphics.setColor(love.math.colorFromBytes(255,255,255))
 	end

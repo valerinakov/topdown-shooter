@@ -10,8 +10,12 @@ function Player:new(area,x,y,opts)
     self.gunslingerIdleFrames = {}
     self.gunslingerMovingFrames = {}
 
+    self.hp = 100
+
     self.frame_width = 48
     self.frame_height = 32
+
+    self.invincible = false
 
 	-- table.insert(self.gunslingerIdleFrames, love.graphics.newQuad(0,0,self.frame_width,self.frame_height, gunslingerSpriteMap:getWidth(), gunslingerSpriteMap:getHeight()))
 
@@ -39,6 +43,8 @@ end
 function Player:update(dt)
     Player.super.update(self,dt)
 
+    print(self.invincible)
+
     if self.animationState == 'Moving' and self.movingStopped then
         self.movingStopped = false
         local moveSound = self.moveSound:play()
@@ -50,22 +56,22 @@ function Player:update(dt)
 
     if input:down('left') then
         self.animationState = 'Moving' 
-        self.x = self.x - 1    
+        self.x = self.x - 60*dt    
     end
 
     if input:down('right') then
         self.animationState = 'Moving'
-        self.x = self.x + 1
+        self.x = self.x + 60*dt
     end
 
     if input:down('up') then
         self.animationState = 'Moving'
-        self.y = self.y - 1
+        self.y = self.y - 60*dt
     end
 
     if input:down('down') then
         self.animationState = 'Moving'
-        self.y = self.y + 1    
+        self.y = self.y + 60*dt   
     end
 
     if  not input:down('left') and not input:down('right') and not input:down('up') and not input:down('down') then
@@ -94,7 +100,9 @@ end
 function Player:draw()
     local mx,my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
     -- local angle = math.atan2(my - (self.y + (self.h/2)), mx - (self.x + (self.w/2)))
-    
+    love.graphics.setColor(love.math.colorFromBytes(0, 0, 0, 100))
+    love.graphics.ellipse('fill', self.x + 6,self.y + 10, self.w/2, self.h/4)
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
     if mx < self.x then
         if self.animationState == 'Idle' then
             love.graphics.draw(gunslingerSpriteMap, self.gunslingerIdleFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20,0,-1,1,48)
@@ -113,6 +121,31 @@ function Player:draw()
             love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20)
         end
     end
+
+
     
     -- love.graphics.rectangle("fill", self.x + 18, self.y + 20 ,self.w, self.h)
+end
+
+function Player:damage(n)
+    if self.invincible == false then
+        self.invincible = true
+        self.hp = self.hp - n
+
+        self.timer:after(2, function() 
+            self.invincible = false
+        end)
+
+        flash(3)
+        slow(0.01,5)
+    end
+    
+    if self.hp <= 0 then
+        self:die()
+    end
+end
+
+function Player:die()
+    self.dead = true
+    current_room.gun.dead = true
 end
