@@ -16,6 +16,7 @@ function Player:new(area,x,y,opts)
     self.frame_height = 32
 
     self.invincible = false
+    self.blink = false
 
 	-- table.insert(self.gunslingerIdleFrames, love.graphics.newQuad(0,0,self.frame_width,self.frame_height, gunslingerSpriteMap:getWidth(), gunslingerSpriteMap:getHeight()))
 
@@ -42,8 +43,12 @@ end
 
 function Player:update(dt)
     Player.super.update(self,dt)
-
-    print(self.invincible)
+    
+    if self.invincible and not self.blink then 
+        self.timer:after(0.05, function() 
+            self.blink = true
+        end)
+    end
 
     if self.animationState == 'Moving' and self.movingStopped then
         self.movingStopped = false
@@ -103,7 +108,12 @@ function Player:draw()
     love.graphics.setColor(love.math.colorFromBytes(0, 0, 0, 100))
     love.graphics.ellipse('fill', self.x + 6,self.y + 10, self.w/2, self.h/4)
     love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
-    if mx < self.x then
+    if self.invincible and self.blink then 
+        self.timer:after(0.05, function() 
+            self.blink = false
+        end)
+    else
+        if mx < self.x then
         if self.animationState == 'Idle' then
             love.graphics.draw(gunslingerSpriteMap, self.gunslingerIdleFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20,0,-1,1,48)
         end
@@ -121,7 +131,7 @@ function Player:draw()
             love.graphics.draw(gunslingerSpriteMap, self.gunslingerMovingFrames[math.floor(self.currentFrame)], self.x - 18, self.y - 20)
         end
     end
-
+    end
 
     
     -- love.graphics.rectangle("fill", self.x + 18, self.y + 20 ,self.w, self.h)
@@ -136,8 +146,8 @@ function Player:damage(n)
             self.invincible = false
         end)
 
-        flash(3)
-        slow(0.01,5)
+        slow(0.75,0.25)
+        camera:shake(6, 30, 0.2)
     end
     
     if self.hp <= 0 then

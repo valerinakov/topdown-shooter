@@ -9,7 +9,7 @@ end
 
 function Gun:update(dt)
     Gun.super.update(self,dt)
-
+    
     self.x = current_room.player.x
     self.y = current_room.player.y
 
@@ -25,12 +25,17 @@ function Gun:update(dt)
 end
 
 function Gun:draw()
+    if current_room.player.invincible and current_room.player.blink then 
+        self.timer:after(0.05, function() 
+            self.blink = false
+        end)
+    else
+        if self.mx < self.x then
+            love.graphics.draw(gun, self.x + self.w/2 , self.y + self.h/2 , self.angle + 0.08, 1,-1)
+        elseif    
+        self.mx >= self.x then 
+            love.graphics.draw(gun, self.x + self.w/2 , self.y + self.h/2 , self.angle - 0.08, 1, 1)
+        end
+    end
 
-    if self.mx < self.x then
-        love.graphics.draw(gun, self.x + self.w/2 , self.y + self.h/2 , self.angle + 0.08, 1,-1)
-    end
-    
-    if self.mx >= self.x then 
-        love.graphics.draw(gun, self.x + self.w/2 , self.y + self.h/2 , self.angle - 0.08, 1, 1)
-    end
 end

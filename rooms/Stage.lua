@@ -48,7 +48,7 @@ function Stage:new()
     for i,row in ipairs(self.tilemap) do
             for j,tile in ipairs(row) do
                 if tile ~= 0 then
-                    if tile == 1 or tile == 80 or tile == 82 or tile == 83 or tile == 84 or tile == 85 or tile == 86 or tile == 87 or tile == 21 or tile == 17 or tile == 59 then
+                    if tile == 1 or tile == 80 or tile == 82 or tile == 83 or tile == 84 or tile == 85 or tile == 86 or tile == 87 or tile == 88 or tile == 9  or tile == 13 or tile == 21 or tile == 17 or tile == 43 or tile == 59 then
                         self.walls = self.area:addGameObject('Wall', (j-1) * self.width, (i-1) * self.height)
                         self.area:addCollision(self.walls)
                     end
