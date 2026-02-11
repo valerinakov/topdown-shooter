@@ -21,9 +21,49 @@ function Stage:new()
 
     self.quads = {}
 
+    self.director = Director(self)
+
     self.timer:every(2, function() 
-       self.test = self.area:addGameObject('EnemyBlob', random(0,(gw/2) +25), 50)
-       self.area:addCollision(self.test)
+        self.enemyX = 0
+        self.enemyY = 0
+        self.ang = random(0,6.28)
+        
+        if math.sin(self.ang) > 0 then
+            if self.player.y > 80 then
+                self.enemyY = (self.player.y) - math.sin(self.ang)*(30)
+
+            else
+                self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(30)
+
+            end
+        else
+            if gh - self.player.y > 80 then
+                self.enemyY = (self.player.y) - math.sin(self.ang)*(50)
+            else
+                self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(50)
+            end
+        end
+
+        if math.cos(self.ang) > 0 then
+            if gw - self.player.x > 80 then
+                self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
+            else
+                self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
+            end
+        else
+            if self.player.x > 80 then
+                self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
+            else
+                self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
+            end
+        end
+
+        print("x", self.enemyX)
+        print("Y", self.enemyY)
+
+        self.test = self.area:addGameObject('EnemyBlob', self.enemyX, self.enemyY)
+        -- self.test = self.area:addGameObject('EnemyBlob', random(0,(gw/2) +25), 50)
+        self.area:addCollision(self.test)
     end)
 
     for i = 0,23 do
@@ -95,6 +135,7 @@ end
 function Stage:update(dt)
     self.area:update(dt)
     self.timer:update(dt)
+    self.director:update(dt)
 
     if cameraProjectileOffset.x ~= 0 or cameraProjectileOffset.y ~= 0 then
         self.timer:tween('projoffet', 0.05, cameraProjectileOffset, {x = 0, y = 0}, 'in-out-linear')
@@ -107,40 +148,43 @@ function Stage:update(dt)
     camera.smoother = Camera.smooth.damped(5)
     camera:lockPosition(dt, (gw/2), gh/2)
     -- camera:lookAt(self.player.x,self.player.y)
-    camera:lookAt(self.player.x + camera.x_shake_offset + cameraProjectileOffset.x, self.player.y + camera.y_shake_offset + cameraProjectileOffset.y)
+    if self.player then
+        camera:lookAt(self.player.x + camera.x_shake_offset + cameraProjectileOffset.x, self.player.y + camera.y_shake_offset + cameraProjectileOffset.y)
+    end
 
+    if self.area then
+        local items, len = self.area.world:getItems()
 
-    local items, len = self.area.world:getItems()
+        for i, item in ipairs(items) do
+            -- print(item.name)
+            if item.name == "Player" then
+                self.area:move(self.player, playerFilter)
+            elseif item.name == 'Projectile' then
+                local actualX, actualY, cols, len = self.area:move(item,projectileFilter)
 
-    for i, item in ipairs(items) do
-        -- print(item.name)
-        if item.name == "Player" then
-            self.area:move(self.player, playerFilter)
-        elseif item.name == 'Projectile' then
-            local actualX, actualY, cols, len = self.area:move(item,projectileFilter)
+                for i=1,len do -- If more than one simultaneous collision, they are sorted out by proximity
+                    local col = cols[i]
+                    -- print(("Collision with %s."):format(col.other.name))
 
-            for i=1,len do -- If more than one simultaneous collision, they are sorted out by proximity
-                local col = cols[i]
-                -- print(("Collision with %s."):format(col.other.name))
+                    if col.other.name == "EnemyBlob" then
+                        col.other:damage(item.damage)
+                        item:die()
+                    end
 
-                if col.other.name == "EnemyBlob" then
-                    col.other:damage(item.damage)
-                    item:die()
+                    if col.other.name == "Wall" then
+                        item:die()
+                    end
+
                 end
+            elseif item.name == "EnemyBlob" then
+                local actualX, actualY, cols, len = self.area:move(item,blobFilter)
+            
+                for i=1, len do
+                    local col = cols[i]
 
-                if col.other.name == "Wall" then
-                    item:die()
-                end
-
-            end
-        elseif item.name == "EnemyBlob" then
-            local actualX, actualY, cols, len = self.area:move(item,blobFilter)
-        
-            for i=1, len do
-                local col = cols[i]
-
-                if col.other.name == "Player" then
-                    col.other:damage(10)
+                    if col.other.name == "Player" then
+                        col.other:damage(10)
+                    end
                 end
             end
         end
@@ -172,7 +216,7 @@ function Stage:draw()
 end
 
 function Stage:destroy()
-    self.area:destroy()
     self.player = nil
+    self.area:destroy()
     self.area = nil
 end

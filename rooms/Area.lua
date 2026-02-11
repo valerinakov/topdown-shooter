@@ -67,7 +67,9 @@ end
 function Area:destroy()
     for i = #self.game_objects, 1, -1 do
         local game_object = self.game_objects[i]
-        self.world:remove(game_object)
+        if self.world:hasItem(game_object) then
+            self.world:remove(game_object)
+        end
         game_object:destroy()
         table.remove(self.game_objects, i)
     end
