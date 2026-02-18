@@ -3,7 +3,7 @@ Shop = Object:extend()
 function Shop:new()
     self.area = Area(self)
     self.area:addPhysicsWorld()
-    self.area:addGameObject('Button', 50, 50)
+    self.next_wave_button =self.area:addGameObject('Button', (gw/2) - 25, gh - 100, {w = 80, h = 50, text = "Next Wave"})
     self.main_canvas = love.graphics.newCanvas(gw,gh)
 
     self.mx = 0
@@ -19,10 +19,14 @@ function Shop:update(dt)
     self.area:update(dt)
     print(sx*gw)
     print(sy*gh)
-    self.mx, self.my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
+    self.mx, self.my = 0,0
 
 
-    if(self.mx > 50 and self.mx < 100 and self.my > 50 and self.my < 100) then
+    if input:pressed('mouse1', dt) then
+        self.mx, self.my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
+    end
+
+    if self.mx > self.next_wave_button.x and self.mx < self.next_wave_button.x + self.next_wave_button.w and self.my > self.next_wave_button.y and self.my < self.next_wave_button.y + self.next_wave_button.h then
         gotoRoom("Stage")
     end
 end

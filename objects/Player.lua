@@ -10,8 +10,6 @@ function Player:new(area,x,y,opts)
     self.gunslingerIdleFrames = {}
     self.gunslingerMovingFrames = {}
 
-    self.hp = 100
-
     self.frame_width = 48
     self.frame_height = 32
 
@@ -140,7 +138,7 @@ end
 function Player:damage(n)
     if self.invincible == false then
         self.invincible = true
-        self.hp = self.hp - n
+        hp = hp - n
 
         self.timer:after(2, function() 
             self.invincible = false
@@ -150,7 +148,7 @@ function Player:damage(n)
         camera:shake(6, 30, 0.2)
     end
     
-    if self.hp <= 0 then
+    if hp <= 0 then
         self:die()
     end
 end

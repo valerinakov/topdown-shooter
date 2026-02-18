@@ -89,6 +89,7 @@ function EnemyBlob:damage(damage)
     self.y = self.y - (math.sin(self.angle)*3)
 
     if(self.hp <= 0) then
+        wave_points = wave_points - 1
         self:die()
     end
 end

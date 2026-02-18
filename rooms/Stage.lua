@@ -13,6 +13,10 @@ function Stage:new()
     self.area:addCollision(self.player)
     -- self.area:addCollision(self.blob)
 
+    self.current_wave = "Wave: " .. wave
+
+    self.font = fonts.m5x7_16
+
     self.image_width = scifiTileset:getWidth()
     self.image_height = scifiTileset:getHeight()
 
@@ -23,48 +27,48 @@ function Stage:new()
 
     self.director = Director(self)
 
-    self.timer:every(2, function() 
-        self.enemyX = 0
-        self.enemyY = 0
-        self.ang = random(0,6.28)
+    -- self.timer:every(2, function() 
+    --     self.enemyX = 0
+    --     self.enemyY = 0
+    --     self.ang = random(0,6.28)
         
-        if math.sin(self.ang) > 0 then
-            if self.player.y > 80 then
-                self.enemyY = (self.player.y) - math.sin(self.ang)*(30)
+    --     if math.sin(self.ang) > 0 then
+    --         if self.player.y > 80 then
+    --             self.enemyY = (self.player.y) - math.sin(self.ang)*(30)
 
-            else
-                self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(30)
+    --         else
+    --             self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(30)
 
-            end
-        else
-            if gh - self.player.y > 80 then
-                self.enemyY = (self.player.y) - math.sin(self.ang)*(50)
-            else
-                self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(50)
-            end
-        end
+    --         end
+    --     else
+    --         if gh - self.player.y > 80 then
+    --             self.enemyY = (self.player.y) - math.sin(self.ang)*(50)
+    --         else
+    --             self.enemyY = (self.player.y) - math.sin(-1*self.ang)*(50)
+    --         end
+    --     end
 
-        if math.cos(self.ang) > 0 then
-            if gw - self.player.x > 80 then
-                self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
-            else
-                self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
-            end
-        else
-            if self.player.x > 80 then
-                self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
-            else
-                self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
-            end
-        end
+    --     if math.cos(self.ang) > 0 then
+    --         if gw - self.player.x > 80 then
+    --             self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
+    --         else
+    --             self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
+    --         end
+    --     else
+    --         if self.player.x > 80 then
+    --             self.enemyX = (self.player.x) + math.cos(self.ang) *(50)
+    --         else
+    --             self.enemyX = (self.player.x) + math.cos(3.14 - self.ang) * (50)
+    --         end
+    --     end
 
-        print("x", self.enemyX)
-        print("Y", self.enemyY)
+    --     print("x", self.enemyX)
+    --     print("Y", self.enemyY)
 
-        self.test = self.area:addGameObject('EnemyBlob', self.enemyX, self.enemyY)
-        -- self.test = self.area:addGameObject('EnemyBlob', random(0,(gw/2) +25), 50)
-        self.area:addCollision(self.test)
-    end)
+    --     self.test = self.area:addGameObject('EnemyBlob', self.enemyX, self.enemyY)
+    --     -- self.test = self.area:addGameObject('EnemyBlob', random(0,(gw/2) +25), 50)
+    --     self.area:addCollision(self.test)
+    -- end)
 
     for i = 0,23 do
         for j = 0,7 do
@@ -207,6 +211,10 @@ function Stage:draw()
         end
         if self.area then self.area:draw() end
     camera:detach()
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255, 255))
+    love.graphics.setFont(self.font)
+    love.graphics.print(hp,5,0,0,1.5,1.5)
+    love.graphics.print(self.current_wave,(gw/2) - self.font:getWidth(self.current_wave)/2,0,0,1.5,1.5)
     love.graphics.setCanvas()
 
     love.graphics.setColor(love.math.colorFromBytes(255, 255, 255, 255))
@@ -219,4 +227,5 @@ function Stage:destroy()
     self.player = nil
     self.area:destroy()
     self.area = nil
+    self.director = nil
 end
