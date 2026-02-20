@@ -3,7 +3,7 @@ Shop = Object:extend()
 function Shop:new()
     self.area = Area(self)
     self.area:addPhysicsWorld()
-    self.next_wave_button =self.area:addGameObject('Button', (gw/2) - 25, gh - 100, {w = 80, h = 50, text = "Next Wave"})
+    self.next_wave_button =self.area:addGameObject('Button', (gw/2) - 25, gh - 100, {w = 80, h = 50, text = "Next Wave", p_color = {142, 188, 70}, s_color = {85,112,46}})
     self.main_canvas = love.graphics.newCanvas(gw,gh)
 
     self.mx = 0
@@ -44,4 +44,10 @@ function Shop:draw()
     love.graphics.setBlendMode('alpha')
     love.graphics.draw(self.main_canvas, 0, 0, 0, sx, sy)
     love.graphics.setBlendMode('alpha')
+end
+
+function Shop:destroy()
+    self.next_wave_button = nil
+    self.area:destroy()
+    self.area = nil
 end
