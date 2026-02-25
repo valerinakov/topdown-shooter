@@ -3,6 +3,8 @@ Director = Object:extend()
 function Director:new(stage)
     self.stage = stage
 
+    self.wave_complete = false
+
     self.timer = Timer()
 
     self.wave_to_points = {}
@@ -39,11 +41,12 @@ end
 
 function Director:update(dt)
     self.timer:update(dt)
-    if wave_points == 0 then
+    if wave_points == 0 and not self.wave_complete then
+        self.wave_complete = true
         wave = wave + 1
-        -- self.timer:after(3, function () 
-        gotoRoom('Shop')
-        -- end)
+        self.timer:after(3, function () 
+            gotoRoom('Shop')
+        end)
 
     end
 end

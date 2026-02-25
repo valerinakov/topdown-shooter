@@ -9,9 +9,11 @@ function Button:new(area,x,y,opts)
     self.text = opts.text
     self.font = fonts.m5x7_16
 
+    self.animating = false
+
     self.p_color = opts.p_color
     self.s_color = opts.s_color
-    self.color = opts.p_color
+    self.color = opts.s_color
     self.test = true;
 end
 
@@ -20,24 +22,17 @@ function Button:update(dt)
 
     self.mx, self.my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
 
-    if (self.mx > self.x and self.mx < self.x + self.w) and (self.my > self.y and self.my < self.y + self.h) then
-        if self.test then
-            self.test = false
-                self.timer:tween(0.5, self.color, self.s_color, 'in-out-quad', function() 
-                    self.test = true
-                end)
-        end
-    else
-        if self.test then
-            self.test = false
-            self.timer:tween(0.5, self.color, self.p_color, 'in-out-quad', function() 
-                self.test = true
-            end)
+    if (self.mx > self.x and self.mx < self.x + self.w) and (self.my > self.y and self.my < self.y + self.h) and (not self.animating) then
+        self.animating = true
+        self.timer:tween(0.1, self.color, self.s_color, 'linear')
+        self.timer:after(0.1, function() self.animating = false end)
+    elseif (self.mx < self.x or self.mx > self.x + self.w) and (self.my < self.y and self.my > self.y + self.h ) and (not self.animating) then
+        self.animating = true
+        self.timer:tween(0.1, self.color, self.p_color, 'linear')
+        self.timer:after(0.1, function() self.animating = false end)
 
-        end
         -- self.color = self.p_color
     end
-
 end
 
 function Button:draw()
@@ -49,3 +44,8 @@ function Button:draw()
     love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
 end
 
+function Button:collision(x,y)
+    if x > self.x and x < self.x + self.w and y > self.y and y < self.y + self.h then
+        return true
+    end
+end

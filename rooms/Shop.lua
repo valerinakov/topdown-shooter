@@ -3,18 +3,16 @@ Shop = Object:extend()
 function Shop:new()
     self.area = Area(self)
     self.area:addPhysicsWorld()
-    self.next_wave_button =self.area:addGameObject('Button', (gw/2) - 25, gh - 100, {w = 80, h = 50, text = "Next Wave", p_color = {142, 188, 70}, s_color = {85,112,46}})
+    self.next_wave_button =self.area:addGameObject('Button', (gw/2) - 25, gh - 100, {w = 80, h = 50, text = "Next Wave", p_color = {142, 188, 70}, s_color = {255,112,46}})
     self.main_canvas = love.graphics.newCanvas(gw,gh)
-
+    --{85,112,46}
     self.mx = 0
     self.my = 0
 
 end
 
 function Shop:update(dt)
-    -- camera.smoother = Camera.smooth.none()
     camera:lookAt(gw/2,gh/2)
-    -- camera:lockPosition(dt, (gw/2), gh/2)
 
     self.area:update(dt)
     print(sx*gw)
@@ -26,7 +24,10 @@ function Shop:update(dt)
         self.mx, self.my = camera:getMousePosition(sx,sy,0,0,sx*gw,sy*gh)
     end
 
-    if self.mx > self.next_wave_button.x and self.mx < self.next_wave_button.x + self.next_wave_button.w and self.my > self.next_wave_button.y and self.my < self.next_wave_button.y + self.next_wave_button.h then
+    -- if self.mx > self.next_wave_button.x and self.mx < self.next_wave_button.x + self.next_wave_button.w and self.my > self.next_wave_button.y and self.my < self.next_wave_button.y + self.next_wave_button.h then
+    --     gotoRoom("Stage")
+    -- end
+    if self.next_wave_button:collision(self.mx,self.my) then
         gotoRoom("Stage")
     end
 end
